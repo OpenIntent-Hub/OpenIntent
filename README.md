@@ -1,9 +1,5 @@
-# OpenIntent
+# OpenIntent开源意图路 (由协议)
 Open Source Intent Routing Protocol: Connecting Users with Vertical Agents.
-# OpenIntent (开源意图路由协议)
-
-开源意图路由协议：无缝连接创业者意图与垂直领域“投资人匹配” Agent。
-
 ## 🌟 核心理念
 
 融资效率不应受限于封闭的社交圈。OpenIntent 致力于打造一个开放的投融资对接平台，通过纯粹的技术通讯协议，实现融资需求的精准路由与分发。打赏金额直接流向 Agent 开发者。
