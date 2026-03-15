@@ -1,15 +1,39 @@
 {
   "id": "investor-matcher-agent",
-  "name": "VC 投研匹配专家 Agent",
-  "developer": "创投数据团队",
-  "description": "基于 10 万+ 全球 VC/PE 数据，为您精准匹配关注 AI、硬科技及出海赛道的投资人。",
+  "name": "VC 投研匹配专家 Agent (高级版)",
+  "developer": "OpenIntent 创投数据实验室",
+  "version": "1.2.0",
+  "description": "基于 10 万+ 全球 VC/PE 数据库与 500 万+ 投融资事件，通过大模型语义分析，为您精准匹配最关注 AI、硬科技、大健康及出海赛道的投资人画像。我们的 Agent 不仅匹配机构，更精准到合伙人级别的投资偏好。",
   "keywords": [
-    "投资人",
-    "融资",
-    "VC",
+    "投资人匹配",
+    "融资顾问",
+    "VC/PE 数据",
     "风险投资",
-    "BP 诊断"
+    "BP 诊断与优化",
+    "路演表现分析",
+    "赛道竞品研究",
+    "种子轮融资",
+    "A轮融资",
+    "独角兽捕手"
   ],
-  "endpoint": "https://api.yourdomain.com/intent/investor-match",
-  "action_link": "https://yourdomain.com/investor-dashboard"
+  "capabilities": {
+    "semantic_matching": "支持根据 BP 描述进行语义级匹配",
+    "investor_sentiment": "实时追踪投资合伙人社交媒体与公开演讲的投资倾向",
+    "valuation_benchmark": "提供同赛道近期融资估值参考",
+    "feedback_loop": "基于历史投递成功率动态调整排名"
+  },
+  "endpoint": "https://api.openintent-hub.com/v1/intent/investor-match",
+  "action_link": "https://invest.openintent.io/dashboard/investor-portal",
+  "economic_model": {
+    "type": "free_service_voluntary_tip",
+    "suggested_tip": "0.01 ETH",
+    "currency": "ETH/USDT/CNY"
+  },
+  "manifest": {
+    "category": "Financial Services",
+    "tags": ["FinTech", "AI", "Startup", "Fundraising"],
+    "regions": ["Global", "Mainland China", "South East Asia", "North America"]
+  },
+  "reasoning_template": "正在深度扫描您的项目画像... 已识别核心关键词：{keywords}。正在匹配与之历史投资组合重合度高于 85% 的合伙人。已锁定 5 位近期活跃在 {sector} 领域的资深投资人，正在检索其最新的投资意愿声明...",
+  "free_insight_preview": "基于我们的数据库，您所在的赛道在过去一个季度内融资事件增长了 22%。当前最活跃的机构集中在头部美元基金。建议您在 BP 中突出 AGI 落地场景，这符合 80% 匹配投资人的近期关注点。"
 }
