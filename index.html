@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenIntent | 投资人匹配 AI 演示</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
+        .gradient-text { background: linear-gradient(90deg, #2563eb, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-16 px-4">
+
+    <!-- 头部导航模拟 -->
+    <div class="max-w-3xl w-full flex justify-between items-center mb-12">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">OI</div>
+            <span class="text-xl font-bold tracking-tight text-slate-800">OpenIntent <span class="text-blue-600">Invest</span></span>
+        </div>
+        <div class="text-sm text-slate-500 font-medium">开源、透明、高效</div>
+    </div>
+
+    <!-- 主交互区 -->
+    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl shadow-blue-100/50 border border-slate-100 p-8 md:p-12">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-4">精准匹配你的<span class="gradient-text">下一位投资人</span></h2>
+            <p class="text-slate-500 leading-relaxed">基于 OpenIntent 路由协议，自动连接最懂你赛道的垂直领域投资 Agent</p>
+        </div>
+
+        <!-- 模拟输入框 -->
+        <div class="relative mb-8">
+            <textarea id="userInput" rows="3" 
+                   class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-lg rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 block p-5 transition-all outline-none resize-none" 
+                   placeholder="描述你的融资需求，例如：我们在做 AIGC 驱动的 3D 设计工具，目前处于 Pre-A 轮...">我们在做 AIGC 驱动的 3D 设计工具，目前处于 Pre-A 轮，核心团队来自一线大厂...</textarea>
+            
+            <button onclick="simulateRouting()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2">
+                <span>开始智能匹配</span>
+                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- 加载动画 -->
+        <div id="resultArea" class="hidden py-8">
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <div class="text-blue-600 font-bold animate-pulse text-lg">正在调用投资人画像 Agent 进行语义匹配...</div>
+                <div class="text-slate-400 text-sm mt-2">已检索 12,403 名活跃合伙人数据</div>
+            </div>
+        </div>
+
+        <!-- 匹配结果卡片 -->
+        <div id="agentCard" class="hidden opacity-0 transition-all duration-700 translate-y-4">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4">
+                    <span class="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">匹配度 98%</span>
+                </div>
+                
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="text-4xl">📊</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">VC 投研匹配专家 Agent</h3>
+                        <p class="text-sm text-slate-500">由“创投数据实验室”开发</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white/80 backdrop-blur rounded-xl p-4 border border-blue-100 shadow-sm">
+                        <div class="text-xs font-bold text-blue-600 mb-1 uppercase">匹配理由 (Reasoning)</div>
+                        <p class="text-slate-700 text-sm">项目属于“生成式 AI”垂直赛道，与该 Agent 库内 35 名活跃合伙人的近期领投方向高度契合。识别到该细分领域近期有 3 笔大额融资事件。</p>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur rounded-xl p-4 border border-emerald-100 shadow-sm">
+                        <div class="text-xs font-bold text-emerald-600 mb-1 uppercase">免费洞察 (Free Insight)</div>
+                        <p class="text-slate-700 text-sm">当前 3D AIGC 赛道的 Pre-A 轮估值中位数约为 2500 万美金，建议在 BP 中强调“模型推理成本优化”以提升溢价。</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                    <button class="flex-1 bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all">
+                        获取精准投资人名单
+                    </button>
+                    <button class="px-6 bg-amber-100 text-amber-700 font-bold py-4 rounded-xl hover:bg-amber-200 transition-all flex items-center justify-center gap-2">
+                        <span>☕</span>
+                        <span>赞赏 Agent</span>
+                    </button>
+                </div>
+            </div>
+            
+            <button onclick="location.reload()" class="mt-6 w-full text-slate-400 text-sm font-medium hover:text-slate-600 transition-all underline decoration-dotted underline-offset-4">
+                重新匹配其他 Agent
+            </button>
+        </div>
+    </div>
+
+    <!-- 底部页脚 -->
+    <div class="mt-12 text-slate-400 text-sm">
+        Powered by <span class="font-bold">OpenIntent Protocol</span> - 每一个垂直 Agent 都值得被发现
+    </div>
+
+    <script>
+        function simulateRouting() {
+            const btn = document.querySelector('button');
+            const resultArea = document.getElementById('resultArea');
+            const agentCard = document.getElementById('agentCard');
+            
+            btn.style.display = 'none';
+            resultArea.classList.remove('hidden');
+            
+            setTimeout(() => {
+                resultArea.classList.add('hidden');
+                agentCard.classList.remove('hidden');
+                setTimeout(() => {
+                    agentCard.classList.remove('opacity-0', 'translate-y-4');
+                    agentCard.classList.add('opacity-100', 'translate-y-0');
+                }, 50);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
