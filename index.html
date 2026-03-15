@@ -36,6 +36,19 @@
         }
         .reveal { animation: fadeInUp 0.5s ease forwards; }
         
+        /* 模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
         /* 移动端滚动条隐藏优化 */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
@@ -59,7 +72,7 @@
                     class="w-full bg-transparent text-white text-lg md:text-xl p-4 md:p-6 outline-none resize-none placeholder-slate-700" 
                     placeholder="请输入您的商业需求..."></textarea>
                 <div class="px-4 md:px-6 pb-4 md:pb-6 flex flex-col gap-6">
-                    <div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap gap-2 text-left">
                         <button onclick="quickFill('我的 App 要出海印尼，需要哪些合规准入？')" class="px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 rounded-full text-[10px] font-bold text-blue-400 border border-blue-500/20 transition-all"># 出海合规</button>
                         <button onclick="quickFill('寻找能够承接 5000 套精密铝合金加工的工厂')" class="px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 rounded-full text-[10px] font-bold text-purple-400 border border-purple-500/20 transition-all"># 工业供应链</button>
                         <button onclick="quickFill('我想做个数字人直播，推荐性价比最高的高保真模型')" class="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-full text-[10px] font-bold text-emerald-400 border border-emerald-500/20 transition-all"># 模型选型</button>
@@ -90,9 +103,9 @@
                     OpenIntent 不截流用户，只连接价值。通过开源协议，让您的垂直 Agent 触达最精准的商业意图。
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="https://github.com/qian-uowai/OpenIntent" target="_blank" class="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs md:text-sm font-bold transition-all text-center">
-                        接入指南
-                    </a>
+                    <button onclick="toggleModal('submitAgentModal', true)" class="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs md:text-sm font-bold transition-all text-center">
+                        提交智能体
+                    </button>
                     <a href="https://github.com/qian-uowai/OpenIntent/tree/main/agents" target="_blank" class="px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/10">
                         <span>提交配置 (PR)</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
@@ -102,29 +115,122 @@
         </footer>
     </div>
 
+    <!-- 提交智能体模态框 -->
+    <div id="submitAgentModal" class="modal-overlay" onclick="toggleModal('submitAgentModal', false)">
+        <div class="glass-card bg-slate-900 w-full max-w-lg rounded-[2.5rem] p-8 md:p-10 relative overflow-y-auto max-h-[90vh]" onclick="event.stopPropagation()">
+            <button onclick="toggleModal('submitAgentModal', false)" class="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors">✕</button>
+            <h3 class="text-2xl font-bold mb-2">注册您的 Agent</h3>
+            <p class="text-slate-500 text-xs mb-8 uppercase tracking-widest font-bold">接入 OpenIntent 路由网络并设置收款</p>
+            
+            <form id="agentForm" onsubmit="handleAgentSubmit(event)" class="space-y-6 text-left">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">Agent 名称</label>
+                    <input type="text" id="newAgentName" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm" placeholder="例如：龙虾供应链专家">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">匹配关键词 (英文逗号隔开)</label>
+                    <input type="text" id="newAgentKeywords" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm" placeholder="龙虾,海鲜,货源">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">Web3 钱包地址 (ETH/BSC)</label>
+                    <input type="text" id="newAgentWallet" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-[10px] font-mono" placeholder="0x...">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">收款码上传 (图片链接)</label>
+                    <input type="text" id="newAgentQR" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm" placeholder="https://...">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black text-sm transition-all shadow-lg shadow-blue-600/20">
+                    确认提交并上线
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 赞赏模态框 -->
+    <div id="tipModal" class="modal-overlay" onclick="toggleModal('tipModal', false)">
+        <div class="glass-card bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 relative text-center" onclick="event.stopPropagation()">
+            <button onclick="toggleModal('tipModal', false)" class="absolute top-6 right-6 text-slate-500 hover:text-white">✕</button>
+            <div class="text-4xl mb-4">☕</div>
+            <h3 id="tipAgentName" class="text-xl font-bold mb-2">赞赏开发者</h3>
+            <p class="text-slate-500 text-xs mb-8">支持本 Agent 的后续维护与开源工作</p>
+            
+            <div id="tipWalletContainer" class="hidden bg-black/40 p-4 rounded-2xl mb-6 text-left border border-white/5">
+                <p class="text-[9px] font-bold text-blue-500 mb-2 uppercase tracking-widest">Web3 Address</p>
+                <div class="flex items-center justify-between gap-2">
+                    <code id="tipWalletAddr" class="text-[10px] text-slate-300 break-all font-mono">0x...</code>
+                    <button onclick="copyWallet()" class="bg-blue-600/20 text-blue-400 text-[9px] px-2 py-1 rounded font-bold hover:bg-blue-600 hover:text-white transition-all">复制</button>
+                </div>
+            </div>
+
+            <div id="tipQRContainer" class="hidden">
+                <p class="text-[9px] font-bold text-slate-500 mb-3 uppercase tracking-widest">微信/支付宝扫码</p>
+                <div class="bg-white p-2 rounded-xl inline-block shadow-inner">
+                    <img id="tipQRImg" src="" class="w-32 h-32 object-contain">
+                </div>
+            </div>
+            
+            <p id="copyFeedback" class="text-green-500 text-[10px] font-bold mt-4 opacity-0 transition-opacity">已成功复制地址！</p>
+        </div>
+    </div>
+
     <script>
         const mockAgents = {
             "出海": {
                 name: "Sea-Bridge Legal", icon: "⚖️", dev: "GLOBAL COMPLIANCE GROUP",
                 insight: "印尼 PSE 注册是首要门槛。目前社交类 App 审核约 15 个工作日，建议提前准备方案。",
-                logic: "已匹配 2024 年印尼通讯部最新修订案，针对泛娱乐出海企业完成对标。"
+                logic: "已匹配 2024 年印尼通讯部最新修订案，针对泛娱乐出海企业完成对标。",
+                payment: { wallet: "0x71C765...d897", qr: "https://via.placeholder.com/150?text=Legal+Pay" }
             },
             "工业": {
                 name: "Machinery Hub", icon: "⚙️", dev: "SMART MANUFACTURE",
                 insight: "华南地区有 12 家工厂具备 5 轴联动加工能力。预计单价在 85-110 元/件。",
-                logic: "实时扫描全国 ERP 共享池。识别到佛山工厂产能余量，处于价格最优期。"
+                logic: "实时扫描全国 ERP 共享池。识别到佛山工厂产能余量，处于价格最优期。",
+                payment: { wallet: "0x44B8...aE32", qr: "" }
             },
             "模型": {
                 name: "Model-Select Pro", icon: "🧠", dev: "LLM BENCHMARK AI",
                 insight: "优先选择 MiniMax-abab6 或 DeepSeek-V3。按 API 计费，可节省 65% 成本。",
-                logic: "基于上周最新的 Token 吞吐量实测数据。已剔除溢价较高的过时模型。"
+                logic: "基于上周最新的 Token 吞吐量实测数据。已剔除溢价较高的过时模型。",
+                payment: { wallet: "", qr: "https://via.placeholder.com/150?text=Model+QR" }
             },
             "IP": {
                 name: "Copyright Guard", icon: "📜", dev: "IP RIGHTS LAB",
                 insight: "《三体》周边授权由版权方统一管理，授权金约 15w-50w 浮动，需审核设计稿。",
-                logic: "抓取了版权授权公开数据，并结合官方招商手册进行语义比对。"
+                logic: "抓取了版权授权公开数据，并结合官方招商手册进行语义比对。",
+                payment: { wallet: "0xIP...GUARD", qr: "" }
             }
         };
+
+        let activeAgentKey = null;
+
+        function toggleModal(id, show) {
+            document.getElementById(id).style.display = show ? 'flex' : 'none';
+        }
+
+        function handleAgentSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('newAgentName').value;
+            const keywordsRaw = document.getElementById('newAgentKeywords').value;
+            const wallet = document.getElementById('newAgentWallet').value;
+            const qr = document.getElementById('newAgentQR').value;
+
+            const keywords = keywordsRaw.split(',').map(k => k.trim());
+            
+            // 注册到本地 mock 数据中
+            const mainKeyword = keywords[0];
+            mockAgents[mainKeyword] = {
+                name: name,
+                icon: "🤖",
+                dev: "CUSTOM AGENT",
+                insight: `已成功接入路由。作为专攻 [${keywordsRaw}] 的专家，我已为您准备好初步方案。`,
+                logic: `开发者自定义逻辑已上线。当前匹配权重：High。`,
+                payment: { wallet: wallet, qr: qr }
+            };
+
+            alert(`智能体 "${name}" 已上线！尝试输入关键词 "${mainKeyword}" 进行测试。`);
+            toggleModal('submitAgentModal', false);
+            document.getElementById('agentForm').reset();
+        }
 
         function quickFill(text) {
             document.getElementById('intentInput').value = text;
@@ -144,16 +250,21 @@
             setTimeout(() => {
                 loader.classList.add('hidden');
                 
-                let key = "模型"; 
-                if (input.includes("出海") || input.includes("印尼")) key = "出海";
-                else if (input.includes("工厂") || input.includes("加工")) key = "工业";
-                else if (input.includes("IP") || input.includes("三体")) key = "IP";
+                let key = "模型";
+                // 查找匹配的关键词
+                for (let k in mockAgents) {
+                    if (input.includes(k)) {
+                        key = k;
+                        break;
+                    }
+                }
 
                 const data = mockAgents[key];
+                activeAgentKey = key;
 
                 results.innerHTML = `
                     <div class="glass-card rounded-[2rem] p-6 md:p-10 reveal border-l-4 border-l-blue-600 shadow-xl mx-auto">
-                        <div class="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+                        <div class="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 text-left">
                             <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-600/10 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl border border-blue-600/20">${data.icon}</div>
                             <div class="text-left">
                                 <h3 class="text-xl md:text-2xl font-bold">${data.name}</h3>
@@ -170,17 +281,55 @@
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
                             <button class="bg-white text-black px-6 md:px-8 py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-blue-600 hover:text-white transition-all w-full sm:w-auto">获取详细报告</button>
-                            <button class="bg-white/5 hover:bg-white/10 border border-white/10 px-6 md:px-8 py-3 rounded-xl font-bold text-xs md:text-sm transition-all w-full sm:w-auto">👍 赞赏支持</button>
+                            <button onclick="openTipModal()" class="bg-white/5 hover:bg-white/10 border border-white/10 px-6 md:px-8 py-3 rounded-xl font-bold text-xs md:text-sm transition-all w-full sm:w-auto">👍 赞赏支持</button>
                         </div>
                     </div>
                 `;
                 
-                // 自动滚动到结果
                 window.scrollTo({
                     top: results.offsetTop - 50,
                     behavior: 'smooth'
                 });
             }, 800);
+        }
+
+        function openTipModal() {
+            if (!activeAgentKey) return;
+            const agent = mockAgents[activeAgentKey];
+            document.getElementById('tipAgentName').innerText = `支持 ${agent.name}`;
+            
+            const walletCont = document.getElementById('tipWalletContainer');
+            const qrCont = document.getElementById('tipQRContainer');
+            
+            if (agent.payment.wallet) {
+                walletCont.classList.remove('hidden');
+                document.getElementById('tipWalletAddr').innerText = agent.payment.wallet;
+            } else {
+                walletCont.classList.add('hidden');
+            }
+
+            if (agent.payment.qr) {
+                qrCont.classList.remove('hidden');
+                document.getElementById('tipQRImg').src = agent.payment.qr;
+            } else {
+                qrCont.classList.add('hidden');
+            }
+
+            toggleModal('tipModal', true);
+        }
+
+        function copyWallet() {
+            const addr = document.getElementById('tipWalletAddr').innerText;
+            const temp = document.createElement('input');
+            temp.value = addr;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            
+            const fb = document.getElementById('copyFeedback');
+            fb.style.opacity = '1';
+            setTimeout(() => fb.style.opacity = '0', 2000);
         }
     </script>
 </body>
